@@ -1,4 +1,3 @@
-// app/auth/signin/page.tsx
 "use client";
 
 import { signIn } from "next-auth/react";
@@ -33,11 +32,7 @@ const SignInPage = () => {
 
   return (
     <div className="relative flex flex-col w-full h-full bg-white overflow-hidden">
-      <div
-        className={
-          "max-w-4xl w-full mx-auto flex items-center justify-between  "
-        }
-      >
+      <div className={"max-w-4xl w-full mx-auto flex items-center justify-between  "}>
         <Header
           title="로그인"
           subTitle="KNUckle을 시작하기 위해 로그인해주세요"
@@ -45,9 +40,7 @@ const SignInPage = () => {
         />
       </div>
 
-      <div
-        className={" flex-grow mx-auto w-full flex justify-center items-center"}
-      >
+      <div className={" flex-grow mx-auto w-full flex justify-center items-center"}>
         <div className="w-full max-w-md px-8 flex flex-col items-center">
           <div className="mb-8 flex flex-col items-center">
             <Image
@@ -57,9 +50,7 @@ const SignInPage = () => {
               alt="KNUckle 로고"
               className="rounded-full bg-neutral-300 mb-4"
             />
-            <h1 className="text-2xl font-light text-center mb-2">
-              KNUckle에 오신 것을 환영합니다
-            </h1>
+            <h1 className="text-2xl font-light text-center mb-2">KNUckle에 오신 것을 환영합니다</h1>
             <p className="text-neutral-500 text-center text-sm">
               계정에 로그인하고 공주대의 모든 정보를 편리하게 이용하세요
             </p>

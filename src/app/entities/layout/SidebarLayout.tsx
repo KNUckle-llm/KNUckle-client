@@ -27,8 +27,8 @@ const SidebarLayout = ({ children }: SidebarLayoutProps) => {
 
   // 컴포넌트 마운트 시 ref를 스토어에 설정
   useEffect(() => {
-    if (mainRef) {
-      setMainRef(mainRef);
+    if (mainRef.current) {
+      setMainRef(mainRef as React.RefObject<HTMLDivElement>);
     }
 
     // 언마운트 시 ref 정리

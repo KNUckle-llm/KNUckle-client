@@ -1,11 +1,9 @@
 import { create } from "zustand";
 import { RefObject } from "react";
 
-type MainRef = RefObject<HTMLDivElement>;
-
 interface ScrollStore {
-  mainRef: MainRef | null;
-  setMainRef: (ref: React.RefObject<HTMLDivElement | null> | null) => void;
+  mainRef: RefObject<HTMLDivElement> | null;
+  setMainRef: (ref: RefObject<HTMLDivElement> | null) => void;
   scrollTo: (position: number, behavior?: ScrollBehavior) => void;
 }
 
