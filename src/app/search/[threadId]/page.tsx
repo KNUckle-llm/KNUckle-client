@@ -1,26 +1,19 @@
 "use client";
 
 import QuestionThread from "@/app/entities/thread/QuestionThread";
-import React, {
-  FormEvent,
-  RefObject,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { FormEvent, RefObject, useEffect, useRef, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { useScrollStore } from "@/app/store/useScrollStore";
 import { useParams } from "next/navigation";
-import SVGLoadingSpinner from "@/app/entities/loading/SVGLoadingSpinner";
-import { ISessionResponse, Message } from "@/app/lib/types/thread";
 import { SubmitHandler, useForm } from "react-hook-form";
 import InThreadQuestionInput from "@/app/entities/thread/InThreadQuestionInput";
-import useDataFetch, {
-  useDataFetchConfig,
-} from "@/app/hooks/common/useDataFetch";
 import ErrorBox from "@/app/entities/error/ErrorBox";
 import useStreaming from "@/app/hooks/chat/useStreaming";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useQuery } from "react-query";
+import { getThreadData } from "@/app/lib/api/chat/thread";
+import { IThreadResponse } from "@/app/lib/types/thread";
+import useSearchStore from "@/app/store/useSearchStore";
 
 interface SearchPageProps {}
 
@@ -29,15 +22,16 @@ interface IData {
 }
 
 const SearchPage = ({}: SearchPageProps) => {
-  const [result, setResult] = useState<ISessionResponse | null>(null);
   const [copyComplete, setCopyComplete] = useState(false);
+  const [result, setResult] = useState<IThreadResponse | null>(null);
+  const { searchQuery, isSearching, setIsSearching } = useSearchStore();
 
   // Form
   const {
     handleSubmit,
     register,
     watch,
-    reset,
+    reset: resetForm,
     formState: { errors },
   } = useForm();
 
@@ -46,20 +40,20 @@ const SearchPage = ({}: SearchPageProps) => {
   const mainRef = useScrollStore((state) => state.mainRef);
   const params = useParams();
   const threadId = params.threadId;
-  const serverUrl = process.env.AI_SERVER_URL || "http://localhost:8000";
 
-  const [initialStat, setInitialStat] = useState<Message | null>();
+  const { data, isLoading } = useQuery(
+    ["threadData", threadId],
+    () => getThreadData(threadId as string),
+    {
+      enabled: !!threadId,
+    }
+  );
 
-  const getThreadDataConfig: useDataFetchConfig = {
-    url: `${serverUrl}/chat/history/${threadId}`,
-    method: "GET",
-    onSuccess: (data: ISessionResponse) => {
+  useEffect(() => {
+    if (data) {
       setResult(data);
-    },
-    dependencies: [threadId],
-  };
-  const { loading, error, refetch } =
-    useDataFetch<ISessionResponse>(getThreadDataConfig);
+    }
+  }, [data]);
 
   const scrollToBottom = () => {
     if (mainRef && mainRef.current) {
@@ -75,14 +69,19 @@ const SearchPage = ({}: SearchPageProps) => {
   };
 
   const { onSubmit, streamingState, isThinking } = useStreaming({
-    setResult,
     scrollToBottom,
-    setInitialStat,
-    loading,
-    resetForm: reset,
+    resetForm,
+    setResult,
     threadId: threadId as string,
     onCompleteStreaming,
   });
+
+  useEffect(() => {
+    if (isSearching && searchQuery) {
+      onSubmit({ question: searchQuery });
+      setIsSearching(false);
+    }
+  }, [isSearching, searchQuery, onSubmit, setIsSearching]);
 
   const scrollToEnd = (ref: RefObject<HTMLDivElement>) => {
     if (ref.current) {
@@ -111,7 +110,7 @@ const SearchPage = ({}: SearchPageProps) => {
     onSubmit({ question: relativeQuestion });
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div
         className={
@@ -132,27 +131,25 @@ const SearchPage = ({}: SearchPageProps) => {
   }
 
   return (
-    <ErrorBoundary fallback={<ErrorBox />}>
-      <section
-        suppressHydrationWarning={true}
-        className={"relative flex flex-col h-full mx-auto max-w-5xl w-full"}
-      >
-        <QuestionThread
-          result={result!}
-          copyComplete={copyComplete}
-          onClick={copyToClipboard}
-          onClickRelative={onClickRelative}
-          scrollToEnd={scrollToEnd}
-          isStreaming={streamingState.isStreaming}
-        />
+    <section
+      suppressHydrationWarning={true}
+      className={"relative flex flex-col h-full mx-auto max-w-5xl w-full"}
+    >
+      <QuestionThread
+        result={result!}
+        copyComplete={copyComplete}
+        onClick={copyToClipboard}
+        onClickRelative={onClickRelative}
+        scrollToEnd={scrollToEnd}
+        isStreaming={streamingState.isStreaming}
+      />
 
-        <InThreadQuestionInput
-          isThinking={isThinking || streamingState.isStreaming}
-          handleSubmit={handleSubmit(onSubmit as SubmitHandler<any>)}
-          register={register}
-        />
-      </section>
-    </ErrorBoundary>
+      <InThreadQuestionInput
+        isThinking={isThinking || streamingState.isStreaming}
+        handleSubmit={handleSubmit(onSubmit as SubmitHandler<any>)}
+        register={register}
+      />
+    </section>
   );
 };
 
