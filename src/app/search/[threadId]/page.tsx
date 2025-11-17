@@ -43,7 +43,9 @@ const SearchPage = ({}: SearchPageProps) => {
 
   const { data, isLoading } = useQuery(
     ["threadData", threadId],
-    () => getThreadData(threadId as string),
+    () => {
+      if (!isSearching) return getThreadData(threadId as string);
+    },
     {
       enabled: !!threadId,
     }
