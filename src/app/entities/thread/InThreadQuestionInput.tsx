@@ -14,8 +14,8 @@ const InThreadQuestionInput = ({
   isThinking,
 }: InThreadQuestionInputProps) => {
   return (
-    <div className=" mx-auto max-w-5xl w-full m-3">
-      <div className="w-full rounded-lg bg-white p-2 border border-black shadow-md focus:shadow-lg">
+    <div className=" mx-auto max-w-5xl w-full m-3 ">
+      <div className="  rounded-lg bg-white p-2 border border-black shadow-md focus:shadow-lg mx-3">
         <form className="flex items-center gap-2" onSubmit={handleSubmit}>
           <input
             type="text"
