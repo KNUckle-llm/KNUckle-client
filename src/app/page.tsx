@@ -72,17 +72,11 @@ export default function Home() {
   };
 
   return (
-    <div
-      className={"relative h-full flex flex-col items-center justify-center"}
-    >
-      <h1 className={"text-4xl xl:text-5xl 2xl:text-6xl font-extralight mb-8"}>
+    <div className={"relative h-full flex flex-col items-center justify-center"}>
+      <h1 className={"text-4xl xl:text-5xl 2xl:text-6xl font-semibold mb-8"}>
         {getWelcomeMessage() || "환영합니다."}
       </h1>
-      <QuestionInput
-        thinking={isThinking}
-        handleSubmit={onSubmit}
-        register={register}
-      />
+      <QuestionInput thinking={isThinking} handleSubmit={onSubmit} register={register} />
       <Footer />
     </div>
   );
