@@ -131,7 +131,7 @@ const useStreaming = ({
         },
         body: JSON.stringify({
           question: question.trim(),
-          threadId,
+          thread_id: threadId,
         }),
         signal: abortControllerRef.current.signal,
       });
