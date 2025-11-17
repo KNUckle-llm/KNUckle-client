@@ -53,7 +53,7 @@ const SearchPage = ({}: SearchPageProps) => {
     if (data) {
       setResult(data);
     }
-  }, [data]);
+  }, [isLoading]);
 
   const scrollToBottom = () => {
     if (mainRef && mainRef.current) {
