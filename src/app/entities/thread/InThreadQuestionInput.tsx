@@ -15,11 +15,14 @@ const InThreadQuestionInput = ({
 }: InThreadQuestionInputProps) => {
   return (
     <div className=" mx-auto max-w-5xl w-full m-3 ">
-      <div className="  rounded-lg bg-white p-2 border border-black shadow-md focus:shadow-lg mx-3">
+      <div
+        className={`rounded-lg bg-white p-2 border ${isThinking ? "border-emerald-600 shadow-xl shadow-emerald-600/20" : "border-black"} shadow-md focus:shadow-lg mx-3 relative overflow-hidden`}
+      >
         <form className="flex items-center gap-2" onSubmit={handleSubmit}>
           <input
             type="text"
-            placeholder="이 스레드에 추가 질문하기..."
+            placeholder={isThinking ? "너클이 생각 중이에요.." : "스레드에 추가 질문하기..."}
+            disabled={isThinking}
             autoComplete={"off"}
             className="flex-1 px-4 py-2 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-300"
             {...register("question", {
